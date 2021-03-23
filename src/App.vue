@@ -1,13 +1,19 @@
 <template>
   <div id="app">
-    <SignIn v-if="!uid"></SignIn>
+    <SignIn v-if="!uid" @updateFromFirebase="updateFromFirebase"></SignIn>
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
     <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button>
     <div class="main-info" v-if="uid">
       <div id="header" class="">
-        <h1>Booking System</h1>
-        <span class="text-muted">by vue2-cli with firebase RTDB</span>       
+        <div class="container">
+          <h1>Booking System</h1>
+          <span class="text-muted">by vue2-cli with firebase RTDB</span>
+          <div class="account">
+            <span>帳號：{{ user.email }}</span>
+            <span class="signOut ml-3" @click="signOut">登出</span>
+          </div>
+        </div>
       </div>
       <div id="content">
         <div class="saveSuccess">Save Success!</div>
@@ -208,6 +214,7 @@ export default {
       tablesTemp: 0,
       seatsTemp: [],
       uid: null,
+      user: null,
       storeInfoTemp: [
         {
           id: 1,
@@ -240,7 +247,7 @@ export default {
     test(){
       // console.log(this.uid)
       console.log(firebase.auth().currentUser)
-      
+      // console.log(this.$store.state.uid)
     },
     signIn(){
       firebase.auth().signInWithEmailAndPassword('charlesx106@gmail.com', '19870118')
@@ -256,7 +263,9 @@ export default {
         });
     },
     signOut(){
-      firebase.auth().signOut()
+      let result = confirm(`確定要登出${this.user.email}嗎?`);
+      if (result) {
+        firebase.auth().signOut()
         .then(() => {
             alert('Sign out success!')
             // var user = firebase.auth().currentUser;
@@ -268,6 +277,7 @@ export default {
           console.log(error.message);
           alert('Sign out error!')
         });
+      }
     },
     updateSort(){
       this.drap = false;
@@ -466,8 +476,10 @@ export default {
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           $this.uid = user.uid;
+          $this.user = user;
         } else {
           $this.uid = null;
+          $this.user = null;
         }
       });
     },
@@ -479,10 +491,11 @@ export default {
   created(){
     this.updateFromFirebase();
   },
-  mounted(){
-  },
   updated(){
-  
+    // this.updateFromFirebase();
+  },
+  watch: {
+
   },
   firebase: {
     documents: db.ref('documents'),
@@ -510,16 +523,32 @@ body {
 }
 
 #header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0 20px 0;
-  color: #555;
+  
+  .container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0 20px 0;
+    color: #555;
+  }
   h1 {
     margin-right: 20px;
   }
   span {
     font-size: 12px;
+  }
+  .account {
+    position: absolute;
+    right: 20px;
+    .signOut {
+      padding: 3px 6px;
+      background: #D82735;
+      font-size: 12px;
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+    }
   }
 }
 

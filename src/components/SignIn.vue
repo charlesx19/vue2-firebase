@@ -39,7 +39,7 @@
                   </div>
 
                   <div class="form-group m-0">
-                    <button type="submit" class="btn btn-primary btn-block">
+                    <button type="submit" class="btn btn-primary btn-block" @click="signInAction">
                       Login
                     </button>
                   </div>
@@ -61,25 +61,59 @@
 
 <script>
 import $ from 'jquery'
+import firebase from 'firebase/app'
+
 
 export default {
   name: 'SignIn',
   props: {
   },
+  emits: ['updateFormFirebase'],
   data(){
     return {
-
+      user: null,
     };
   },
-  methods: {},
+  methods: {
+    signInAction(){
+      let $this = this;
+      $(".my-login-validation").submit(function(e) {
+
+        var form = $(this);
+        if (form[0].checkValidity() === false) {
+          e.preventDefault();
+          e.stopPropagation();
+          form.addClass('was-validated');
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        let email = $('#email');
+        let password = $('#password');
+        firebase.auth().signInWithEmailAndPassword(email.val(), password.val())
+        .then((userCredential) => {
+            alert('Sign in success!')
+            // console.log(userCredential)
+            this.user = userCredential.user;
+            // this.updateFromFirebase();
+        })
+        .then( () => {
+          $this.$store.commit('signInUid', this.user);
+          $this.$emit('updateFromFirebase');
+        })
+        .catch((error) => {
+          console.log(error.message);
+          alert('Sign in error!')
+        });
+      });
+      // alert("hi")
+    },
+  },
   mounted(){
     'use strict';
 
     $(function() {
 
-      // author badge :)
-      var author = '<div style="position: fixed;bottom: 0;right: 20px;background-color: #fff;box-shadow: 0 4px 8px rgba(0,0,0,.05);border-radius: 3px 3px 0 0;font-size: 12px;padding: 5px 10px;">By <a href="https://twitter.com/mhdnauvalazhar">@mhdnauvalazhar</a> &nbsp;&bull;&nbsp; <a href="https://www.buymeacoffee.com/mhdnauvalazhar">Buy me a Coffee</a></div>';
-      $("body").append(author);
 
       $("input[type='password'][data-eye]").each(function(i) {
         var $this = $(this),
@@ -135,14 +169,14 @@ export default {
         });
       });
 
-      $(".my-login-validation").submit(function(e) {
-        var form = $(this);
-            if (form[0].checkValidity() === false) {
-              e.preventDefault();
-              e.stopPropagation();
-            }
-        form.addClass('was-validated');
-      });
+      // $(".my-login-validation").submit(function(e) {
+      //   var form = $(this);
+      //       if (form[0].checkValidity() === false) {
+      //         e.preventDefault();
+      //         e.stopPropagation();
+      //       }
+      //   form.addClass('was-validated');
+      // });
     });
   },
 }
