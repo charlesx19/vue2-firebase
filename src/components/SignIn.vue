@@ -76,36 +76,24 @@ export default {
   },
   methods: {
     signInAction(){
-      let $this = this;
-      $(".my-login-validation").submit(function(e) {
-
-        var form = $(this);
-        if (form[0].checkValidity() === false) {
-          e.preventDefault();
-          e.stopPropagation();
-          form.addClass('was-validated');
-        }
-
-        e.preventDefault();
-        e.stopPropagation();
-        let email = $('#email');
-        let password = $('#password');
-        firebase.auth().signInWithEmailAndPassword(email.val(), password.val())
-        .then((userCredential) => {
-            alert('Sign in success!')
-            // console.log(userCredential)
-            this.user = userCredential.user;
-            // this.updateFromFirebase();
-        })
-        .then( () => {
-          $this.$store.commit('signInUid', this.user);
-          $this.$emit('updateFromFirebase');
-        })
-        .catch((error) => {
-          console.log(error.message);
-          alert('Sign in error!')
-        });
+      let email = $('#email');
+      let password = $('#password');
+      firebase.auth().signInWithEmailAndPassword(email.val(), password.val())
+      .then((userCredential) => {
+          alert('Sign in success!')
+          // console.log(userCredential)
+          this.user = userCredential.user;
+          // this.updateFromFirebase();
+      })
+      .then( () => {
+        this.$store.commit('signInUid', this.user);
+        this.$emit('updateFromFirebase');
+      })
+      .catch((error) => {
+        // console.log(error.message)
+        alert(error.message)
       });
+
       // alert("hi")
     },
   },
@@ -118,7 +106,8 @@ export default {
       $("input[type='password'][data-eye]").each(function(i) {
         var $this = $(this),
           id = 'eye-password-' + i;
-          // el = $('#' + id);
+          var el = $('#' + id);
+          console.log(el)
 
         $this.wrap($("<div/>", {
           style: 'position:relative',
@@ -169,14 +158,17 @@ export default {
         });
       });
 
-      // $(".my-login-validation").submit(function(e) {
-      //   var form = $(this);
-      //       if (form[0].checkValidity() === false) {
-      //         e.preventDefault();
-      //         e.stopPropagation();
-      //       }
-      //   form.addClass('was-validated');
-      // });
+      $(".my-login-validation").submit(function(e) {
+        var form = $(this);
+            if (form[0].checkValidity() === false) {
+              e.preventDefault();
+              e.stopPropagation();
+              form.addClass('was-validated');
+            } else {
+              e.preventDefault();
+              this.signInAction();
+            }
+      });
     });
   },
 }

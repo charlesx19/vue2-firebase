@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <SignIn v-if="!uid" @updateFromFirebase="updateFromFirebase"></SignIn>
+    <SignIn v-if="!user" @updateFromFirebase="updateFromFirebase"></SignIn>
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
     <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button>
-    <div class="main-info" v-if="uid">
+    <div class="main-info" v-if="user">
       <div id="header" class="">
         <div class="container">
           <h1>Booking System</h1>
