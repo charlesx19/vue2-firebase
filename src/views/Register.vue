@@ -46,12 +46,12 @@
 									</div>
 
 									<div class="form-group m-0">
-										<button type="submit" class="btn btn-primary btn-block text-center">
+										<button type="submit" class="btn btn-primary btn-block text-center" @click="registerUser">
 											Register
 										</button>
 									</div>
 									<div class="mt-4 text-center">
-										Already have an account? <a @click="$emit('registerPageShow')">Login</a>
+										Already have an account? <a @click="$emit('registerPageToggle')">Login</a>
 									</div>
 								</form>
 							</div>
@@ -68,17 +68,46 @@
 
 <script>
 import $ from 'jquery'
+import firebase from 'firebase/app'
 
 export default {
   name: 'Register',
   props: {
   },
+  emits: ['registerUidSignIn'],
   data(){
     return {
 
     };
   },
-  methods: {},
+  methods: {
+   registerUser(){
+     let name = $('#name');
+     let email = $('#email');
+     let password = $('#password');
+     var $this = this;
+     firebase.auth().createUserWithEmailAndPassword(email.val(), password.val())
+      .then((userCredential) => {
+        // Signed in 
+        alert('Register success!')
+        var user = userCredential.user;
+        $this.$emit('registerUidSignIn', user);
+        $this.$emit('registerPageToggle');
+        $this.$emit('updateFromFirebase');
+      })
+      .then( () => {
+        var userInfo = firebase.auth().currentUser;
+        userInfo.updateProfile({
+            displayName: name.val()
+        }) 
+      })
+      .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage)
+      });
+   },
+  },
   mounted(){
     'use strict';
 
@@ -147,8 +176,10 @@ export default {
             if (form[0].checkValidity() === false) {
               e.preventDefault();
               e.stopPropagation();
+              form.addClass('was-validated');
+            } else {
+              e.preventDefault();
             }
-        form.addClass('was-validated');
       });
     });
   },

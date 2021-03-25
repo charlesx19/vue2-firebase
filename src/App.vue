@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageShow="registerPageShow"></router-view>
-    <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase" @registerPageShow="registerPageShow"></router-view>
+    <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle"></router-view>
+    <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
@@ -282,8 +282,11 @@ export default {
         });
       }
     },
-    registerPageShow(){
+    registerPageToggle(){
       this.registerPage = !this.registerPage;
+    },
+    registerUidSignIn(user){
+      this.uid = user.uid;
     },
     updateSort(){
       this.drap = false;

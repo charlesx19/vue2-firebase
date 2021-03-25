@@ -44,7 +44,7 @@
                     </button>
                   </div>
                   <div class="mt-4 text-center">
-                    Don't have an account? <a @click="$emit('registerPageShow')">Create One</a>
+                    Don't have an account? <a @click="$emit('registerPageToggle')">Create One</a>
                   </div>
                 </form>
               </div>
@@ -166,7 +166,6 @@ export default {
               form.addClass('was-validated');
             } else {
               e.preventDefault();
-              this.signInAction();
             }
       });
     });
