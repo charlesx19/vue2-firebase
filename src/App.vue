@@ -12,7 +12,7 @@
           <h1>Booking System</h1>
           <span class="text-muted">by vue2-cli with firebase RTDB</span>
           <div class="account">
-            <span>帳號：{{ user.email }}</span>
+            <span>帳號：{{ user.displayName }}</span>
             <span class="signOut ml-3" @click="signOut">登出</span>
           </div>
         </div>
@@ -250,6 +250,7 @@ export default {
     test(){
       // console.log(this.uid)
       console.log(firebase.auth().currentUser)
+      console.log(this.user)
       // console.log(this.$store.state.uid)
     },
     signIn(){
@@ -286,6 +287,7 @@ export default {
       this.registerPage = !this.registerPage;
     },
     registerUidSignIn(user){
+      this.user = user;
       this.uid = user.uid;
     },
     updateSort(){

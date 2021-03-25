@@ -77,7 +77,7 @@ export default {
   emits: ['registerUidSignIn'],
   data(){
     return {
-
+      user: null,
     };
   },
   methods: {
@@ -90,16 +90,20 @@ export default {
       .then((userCredential) => {
         // Signed in 
         alert('Register success!')
-        var user = userCredential.user;
-        $this.$emit('registerUidSignIn', user);
-        $this.$emit('registerPageToggle');
-        $this.$emit('updateFromFirebase');
+        $this.user = userCredential.user;
       })
       .then( () => {
         var userInfo = firebase.auth().currentUser;
         userInfo.updateProfile({
             displayName: name.val()
         }) 
+      })
+      .then( () => {
+        $this.$emit('registerUidSignIn', $this.user);
+        $this.$emit('registerPageToggle');
+      })
+      .then( () => {
+        $this.$emit('updateFromFirebase');
       })
       .catch((error) => {
         var errorCode = error.code;
