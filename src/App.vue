@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <SignIn v-if="!user" @updateFromFirebase="updateFromFirebase"></SignIn>
+    <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageShow="registerPageShow"></router-view>
+    <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase" @registerPageShow="registerPageShow"></router-view>
+    <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
     <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button>
@@ -199,14 +201,14 @@
 <script>
 import { db } from './db'
 import firebase from 'firebase/app'
-import SignIn from './components/SignIn'
+// import SignIn from './components/SignIn'
 // import draggable from 'vuedraggable'
 
 export default {
   name: 'App',
   components: {
     // draggable,
-    SignIn,
+    // SignIn,
   },
   data(){
     return {
@@ -215,6 +217,7 @@ export default {
       seatsTemp: [],
       uid: null,
       user: null,
+      registerPage: false,
       storeInfoTemp: [
         {
           id: 1,
@@ -278,6 +281,9 @@ export default {
           alert('Sign out error!')
         });
       }
+    },
+    registerPageShow(){
+      this.registerPage = !this.registerPage;
     },
     updateSort(){
       this.drap = false;

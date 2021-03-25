@@ -39,12 +39,12 @@
                   </div>
 
                   <div class="form-group m-0">
-                    <button type="submit" class="btn btn-primary btn-block" @click="signInAction">
+                    <button type="submit" class="btn btn-primary btn-block text-center" @click="signInAction">
                       Login
                     </button>
                   </div>
                   <div class="mt-4 text-center">
-                    Don't have an account? <a href="Register">Create One</a>
+                    Don't have an account? <a @click="$emit('registerPageShow')">Create One</a>
                   </div>
                 </form>
               </div>
