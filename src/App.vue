@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle"></router-view>
-    <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
+    <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
@@ -12,7 +12,8 @@
           <h1>Booking System</h1>
           <span class="text-muted">by vue2-cli with firebase RTDB</span>
           <div class="account">
-            <span>帳號：{{ user.displayName }}</span>
+            <span>哈囉，</span>
+            <span style="font-size: 16px; font-weight: 400;">{{ " " + user.displayName }}</span>
             <span class="signOut ml-3" @click="signOut">登出</span>
           </div>
         </div>
@@ -250,16 +251,18 @@ export default {
     test(){
       // console.log(this.uid)
       console.log(firebase.auth().currentUser)
-      console.log(this.user)
+      console.log(this.user.uid)
       // console.log(this.$store.state.uid)
     },
     signIn(){
       firebase.auth().signInWithEmailAndPassword('charlesx106@gmail.com', '19870118')
         .then((userCredential) => {
-            alert('Sign in success!')
-            // console.log(userCredential)
-            this.uid = userCredential.user.uid;
-            this.updateFromFirebase();
+          alert('Sign in success!')
+          // console.log(userCredential)
+          this.user = userCredential.user;
+        })
+        .then(() => {
+          this.updateFromFirebase();
         })
         .catch((error) => {
           console.log(error.message);
@@ -339,7 +342,7 @@ export default {
       }
 
       var newInfo = this.store[this.storeName];
-      var url = `/store/${this.storeName}`;
+      var url = `${this.user.uid}/store/${this.storeName}`;
       db.ref(url).set(newInfo);
       let saveSuccess = document.getElementsByClassName('saveSuccess');
       saveSuccess[0].classList.add('show');
@@ -387,7 +390,7 @@ export default {
 
       this.AIid += 1;
       // console.log(data)
-      let url = `/store/${data.name}`;
+      let url = `${this.user.uid}/store/${data.name}`;
       db.ref(url).set(data);
       db.ref('/AIid/').set(this.AIid);
       this.closeModal();
@@ -451,7 +454,7 @@ export default {
       if (result) {
         for (let i=0; i<this.store[this.storeName].tables.length; i++) {
           if (this.store[this.storeName].tables[i].no == tables.no) {
-            let url = `/store/${this.storeName}/tables/${i}`
+            let url = `${this.user.uid}/store/${this.storeName}/tables/${i}`
             db.ref(url).remove();
             // console.log(url)
           }
@@ -464,7 +467,7 @@ export default {
       if (result) {
         let el = e.target;
         let targetStore = el.nextElementSibling.dataset.store;
-        db.ref(`/store/${targetStore}`).remove();
+        db.ref(`${this.user.uid}/store/${targetStore}`).remove();
       }
       this.updateFromFirebase();
       let saveSuccess = document.getElementsByClassName('saveSuccess');
@@ -474,7 +477,8 @@ export default {
       },1000);
     },
     updateFromFirebase(){
-      db.ref("/store/").on('value', (snapshot) => {
+      // console.log(this.user.uid);
+      db.ref(`${this.user.uid}/store/`).on('value', (snapshot) => {
           var data = snapshot.val();
           this.store = data;
       });
@@ -482,17 +486,7 @@ export default {
           var data = snapshot.val();
           this.AIid = data;
       });
-
-      var $this = this;
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          $this.uid = user.uid;
-          $this.user = user;
-        } else {
-          $this.uid = null;
-          $this.user = null;
-        }
-      });
+      // this.updateFromFirebaseTwo();
     },
     resetStore(){
       this.store = null;
@@ -500,7 +494,21 @@ export default {
     },
   },
   created(){
-    this.updateFromFirebase();
+    var $this = this;
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        $this.uid = user.uid;
+        $this.user = user;
+        $this.updateFromFirebase();
+      } else {
+        $this.uid = null;
+        $this.user = null;
+      }
+    });
+    
+  },
+  mounted(){
+    // this.updateFromFirebase();
   },
   updated(){
     // this.updateFromFirebase();

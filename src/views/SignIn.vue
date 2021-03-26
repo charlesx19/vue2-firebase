@@ -86,7 +86,7 @@ export default {
           // this.updateFromFirebase();
       })
       .then( () => {
-        this.$store.commit('signInUid', this.user);
+        // this.$store.commit('signInUid', this.user);
         this.$emit('updateFromFirebase');
       })
       .catch((error) => {
