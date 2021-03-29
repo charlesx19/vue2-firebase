@@ -5,7 +5,7 @@
         <div class="row justify-content-md-center h-100">
           <div class="card-wrapper">
             <div class="brand">
-              <img src="../assets/logo.png" alt="logo">
+              CHRS's Booking System
             </div>
             <div class="card fat">
               <div class="card-body">
@@ -44,13 +44,13 @@
                     </button>
                   </div>
                   <div class="mt-4 text-center">
-                    Don't have an account? <a @click="$emit('registerPageToggle')">Create One</a>
+                    Don't have an account? <a class="toggleButton" @click="$emit('registerPageToggle')">Create One</a>
                   </div>
                 </form>
               </div>
             </div>
             <div class="footer">
-              Copyright &copy; 2021 &mdash; CHRS!?
+              Copyright &copy; 2021 &mdash; CHRS?!
             </div>
           </div>
         </div>
@@ -189,13 +189,20 @@ div.my-login-page {
 }
 
 .my-login-page .brand {
-	width: 90px;
+	position: relative;
+	width: 100%;
 	height: 90px;
 	overflow: hidden;
-	border-radius: 50%;
+	/* border-radius: 50%; */
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 	margin: 40px auto;
-	box-shadow: 0 4px 8px rgba(0,0,0,.05);
-	position: relative;
+	/* box-shadow: 0 4px 8px rgba(0,0,0,.05); */
+  text-align: center;
+  line-height: 90px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
 	z-index: 1;
 }
 
@@ -238,6 +245,15 @@ div.my-login-page {
 	margin: 40px 0;
 	color: #888;
 	text-align: center;
+}
+
+.toggleButton {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.toggleButton:hover {
+  text-decoration: none;
 }
 
 @media screen and (max-width: 425px) {

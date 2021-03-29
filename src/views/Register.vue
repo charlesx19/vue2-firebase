@@ -5,7 +5,7 @@
 				<div class="row justify-content-md-center h-100">
 					<div class="card-wrapper">
 						<div class="brand">
-							<img src="img/logo.jpg" alt="bootstrap 4 login page">
+							CHRS's Booking System
 						</div>
 						<div class="card fat">
 							<div class="card-body">
@@ -51,7 +51,7 @@
 										</button>
 									</div>
 									<div class="mt-4 text-center">
-										Already have an account? <a @click="$emit('registerPageToggle')">Login</a>
+										Already have an account? <a class="toggleButton" @click="$emit('registerPageToggle')">Login</a>
 									</div>
 								</form>
 							</div>
@@ -116,10 +116,6 @@ export default {
     'use strict';
 
     $(function() {
-
-      // author badge :)
-      var author = '<div style="position: fixed;bottom: 0;right: 20px;background-color: #fff;box-shadow: 0 4px 8px rgba(0,0,0,.05);border-radius: 3px 3px 0 0;font-size: 12px;padding: 5px 10px;">By <a href="https://twitter.com/mhdnauvalazhar">@mhdnauvalazhar</a> &nbsp;&bull;&nbsp; <a href="https://www.buymeacoffee.com/mhdnauvalazhar">Buy me a Coffee</a></div>';
-      $("body").append(author);
 
       $("input[type='password'][data-eye]").each(function(i) {
         var $this = $(this),
@@ -206,13 +202,20 @@ div.my-login-page {
 }
 
 .my-login-page .brand {
-	width: 90px;
+	position: relative;
+	width: 100%;
 	height: 90px;
 	overflow: hidden;
-	border-radius: 50%;
+	/* border-radius: 50%; */
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 	margin: 40px auto;
-	box-shadow: 0 4px 8px rgba(0,0,0,.05);
-	position: relative;
+	/* box-shadow: 0 4px 8px rgba(0,0,0,.05); */
+  text-align: center;
+  line-height: 90px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
 	z-index: 1;
 }
 
@@ -255,6 +258,15 @@ div.my-login-page {
 	margin: 40px 0;
 	color: #888;
 	text-align: center;
+}
+
+.toggleButton {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.toggleButton:hover {
+  text-decoration: none;
 }
 
 @media screen and (max-width: 425px) {
