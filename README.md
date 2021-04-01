@@ -12,6 +12,8 @@
 
 03/23 add vuex to fix components sharing data pain point
 
+04/01 For better security, I add email validation feature
+
 ## Project setup
 ```
 npm install
