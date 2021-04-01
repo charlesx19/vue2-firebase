@@ -504,12 +504,13 @@ export default {
         let targetStore = el.nextElementSibling.dataset.store;
         db.ref(`${this.user.uid}/store/${targetStore}`).remove();
       }
-      this.updateFromFirebase();
       let saveSuccess = document.getElementsByClassName('saveSuccess');
       saveSuccess[0].classList.add('show');
       setTimeout(() => {
         saveSuccess[0].classList.remove('show');
       },1000);
+      this.isShowDetail = false;
+      this.updateFromFirebase();
     },
     updateFromFirebase(){
       // console.log(this.user.uid);
