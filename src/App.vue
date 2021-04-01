@@ -1,12 +1,26 @@
 <template>
   <div id="app">
+    <!-- <h1>{{ "認證狀態:" + emailVerified }}</h1> -->
     <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle"></router-view>
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
-    <!-- <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
+    <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
+    <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
-    <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button> -->
-    <div class="main-info" v-if="user">
+    <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button>
+    <div class="emailVerified" v-if="emailVerified == false">
+      <div class="mainInfo show" ref="mainInfo">
+        This account isn't Verified, make sure you already check validation Email.
+      </div>
+      <div class="resendValidationEmail show" ref="resendValidationEmail" @click="resendValidationEmail">Send validation email</div>
+      <div class="sendSuccess" ref="sendSuccess">
+        Validation email is sended to <span style="font-size: 16px; font-weight: 600; color: #007DDB">{{ user.email }}</span>!
+        After you checked the validation email,
+        reflesh this page, thx.
+      </div>
+      <button @click="signOut" class="btn btn-danger btn-sm mt-3">Sign out</button>
+    </div>
+    <div class="main-info" v-if="user && user.emailVerified == true">
       <div id="header" class="">
         <div class="container">
           <h1>Booking System</h1>
@@ -216,6 +230,7 @@ export default {
       AIid: 1,
       tablesTemp: 0,
       seatsTemp: [],
+      emailVerified: false,
       uid: null,
       user: null,
       registerPage: false,
@@ -249,10 +264,19 @@ export default {
   },
   methods: {
     test(){
-      // console.log(this.uid)
-      console.log(firebase.auth().currentUser)
-      console.log(this.user.uid)
-      // console.log(this.$store.state.uid)
+      // console.log(firebase.auth().currentUser)
+      // console.log(this.user.uid)
+      var user = firebase.auth().currentUser;
+
+      user.sendEmailVerification().then(function() {
+        // Email sent.
+      }).catch(function(error) {
+        console.log(error)
+      });
+    },
+    test2(){
+    var user = firebase.auth().currentUser;
+     console.log(user)
     },
     signIn(){
       firebase.auth().signInWithEmailAndPassword('charlesx106@gmail.com', '19870118')
@@ -292,6 +316,17 @@ export default {
     registerUidSignIn(user){
       this.user = user;
       this.uid = user.uid;
+    },
+    resendValidationEmail(){
+      var user = firebase.auth().currentUser;
+      var $this = this;
+      user.sendEmailVerification().then(function() {
+        $this.$refs.mainInfo.classList.remove('show');
+        $this.$refs.resendValidationEmail.classList.remove('show');
+        $this.$refs.sendSuccess.classList.add('show');
+      }).catch(function(error) {
+        alert(error)
+      });
     },
     updateSort(){
       this.drap = false;
@@ -498,10 +533,12 @@ export default {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         $this.uid = user.uid;
+        $this.emailVerified = user.emailVerified;
         $this.user = user;
         $this.updateFromFirebase();
       } else {
         $this.uid = null;
+        $this.emailVerified = null;
         $this.user = null;
       }
     });
@@ -539,6 +576,40 @@ html {
 
 body {
   position: relative;
+}
+
+.emailVerified {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  .mainInfo {
+    display: none;
+    font-size: 18px;
+    font-weight: 300;
+    &.show {
+      display: block;
+    }
+  }
+  .resendValidationEmail {
+    display: none;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color:#007DDB;
+    cursor: pointer;
+    &.show {
+      display: block;
+    }
+  }
+  .sendSuccess {
+    display: none;
+    &.show {
+      display: block;
+    }
+  }
 }
 
 #header {
