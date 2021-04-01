@@ -13,6 +13,7 @@
 03/23 add vuex to fix components sharing data pain point
 
 04/01 For better security, I add email validation feature
+      Fix if isShowDetail is true, after delete Store success the store does't disappear.
 
 ## Project setup
 ```
