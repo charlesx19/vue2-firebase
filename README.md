@@ -14,6 +14,7 @@
 
 04/01 For better security, I add email validation feature
       Fix if isShowDetail is true, after delete Store success the store does't disappear.
+      Fix when create store, seatCount can set negative number, now the min number is 2.
 
 ## Project setup
 ```

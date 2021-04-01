@@ -418,8 +418,12 @@ export default {
         if (data.tables[i].isBooking == false) {
           data.emptyTable += 1;
         }
-
-        data.tables[i].bkInfo.seatCount = this.seatsTemp[i];
+        if (this.seatsTemp[i] < 1) {
+          alert('座位數最小值為2')
+          data.tables[i].bkInfo.seatCount = 2;
+        } else {
+          data.tables[i].bkInfo.seatCount = this.seatsTemp[i];
+        }
       }
 
 
