@@ -4,10 +4,10 @@
     <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle"></router-view>
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
-    <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
+    <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
     <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
-    <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button>
+    <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button> -->
     <div class="emailVerified" v-if="emailVerified == false">
       <div class="mainInfo show" ref="mainInfo">
         This account isn't Verified, make sure you already check validation Email.
