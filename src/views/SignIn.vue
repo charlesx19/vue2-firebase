@@ -106,8 +106,8 @@ export default {
       $("input[type='password'][data-eye]").each(function(i) {
         var $this = $(this),
           id = 'eye-password-' + i;
-          var el = $('#' + id);
-          console.log(el)
+          // var el = $('#' + id);
+          // console.log(el)
 
         $this.wrap($("<div/>", {
           style: 'position:relative',

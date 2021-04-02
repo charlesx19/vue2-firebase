@@ -16,6 +16,8 @@
       Fix if isShowDetail is true, after delete Store success the store does't disappear.
       Fix when create store, seatCount can set negative number, now the min number is 2.
 
+04/02 Added check validity when create Store can not use empty String, ".", "#", "$" to create store's name.  
+
 ## Project setup
 ```
 npm install

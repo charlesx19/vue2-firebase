@@ -391,48 +391,73 @@ export default {
       // console.log(this.storeName);
     },
     createStore(){
-      let data = {
-          id: this.AIid,
-          name: this.storeInfoTemp.name,
-          tables: [],
-          emptyTable: 0,
-      };
-      for (let i=0; i < this.tablesTemp; i++) {
-        let tables = 
-            {
-              no: i+1,
-              isBooking: false,
-              bkInfo: {
-                name: "",
-                seat: 0,
-                seatCount: 0,
-                kidSeat: 0,
-                date: this.getToday(),
-                time: "",
-                phone: ""
-              }
-            };  
-        data.tables.push(tables);
-        // console.log(this.seatsTemp[i])
+      if (this.storeInfoTemp.name == undefined) {
+        this.storeInfoTemp.name = "";
+      }
+      let name = this.storeInfoTemp.name;
+      let final = false;
 
-        if (data.tables[i].isBooking == false) {
-          data.emptyTable += 1;
+      if (name.trim() != "") {
+        let checkArr = [];
+
+        checkArr.push(name.includes('.'));
+        checkArr.push(name.includes('#'));
+        checkArr.push(name.includes('$'));
+
+        final = checkArr.every( x => {
+          return x == false
+        })
+      }
+      
+
+      if (final) {
+        let data = {
+            id: this.AIid,
+            name: this.storeInfoTemp.name,
+            tables: [],
+            emptyTable: 0,
+        };
+        for (let i=0; i < this.tablesTemp; i++) {
+          let tables = 
+              {
+                no: i+1,
+                isBooking: false,
+                bkInfo: {
+                  name: "",
+                  seat: 0,
+                  seatCount: 0,
+                  kidSeat: 0,
+                  date: this.getToday(),
+                  time: "",
+                  phone: ""
+                }
+              };  
+          data.tables.push(tables);
+          // console.log(this.seatsTemp[i])
+
+          if (data.tables[i].isBooking == false) {
+            data.emptyTable += 1;
+          }
+          if (this.seatsTemp[i] < 1) {
+            alert('座位數最小值為2')
+            data.tables[i].bkInfo.seatCount = 2;
+          } else {
+            data.tables[i].bkInfo.seatCount = this.seatsTemp[i];
+          }
         }
-        if (this.seatsTemp[i] < 1) {
-          alert('座位數最小值為2')
-          data.tables[i].bkInfo.seatCount = 2;
-        } else {
-          data.tables[i].bkInfo.seatCount = this.seatsTemp[i];
-        }
+
+
+        this.AIid += 1;
+        // console.log(data)
+        let url = `${this.user.uid}/store/${data.name}`;
+        db.ref(url).set(data);
+        db.ref('/AIid/').set(this.AIid);
+        this.closeModal();
+      } else {
+        alert("店鋪名稱不可空白或包含 ' . ' 、 ' # ' 、 ' $ ' ，請重新輸入")
+        this.closeModal();
       }
 
-
-      this.AIid += 1;
-      // console.log(data)
-      let url = `${this.user.uid}/store/${data.name}`;
-      db.ref(url).set(data);
-      db.ref('/AIid/').set(this.AIid);
-      this.closeModal();
     },
     createTable(){
       let newTable = this.newBkInfo[0];
@@ -455,7 +480,13 @@ export default {
       this.closeTableModal();
     },
     closeModal(){
-      this.storeInfoTemp = [];
+      this.storeInfoTemp = [
+        {
+          id: 1,
+          name: "",
+          tables: []
+        }
+      ];
       this.tablesTemp = 0;
       this.seatsTemp = [];
     },
