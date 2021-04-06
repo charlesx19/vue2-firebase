@@ -1,8 +1,8 @@
 <template>
 	<div class="my-login-page">
-	<section class="h-100">
-			<div class="container h-100">
-				<div class="row justify-content-md-center h-100">
+	<section class="">
+			<div class="container">
+				<div class="row justify-content-md-center">
 					<div class="card-wrapper">
 						<div class="brand">
 							CHRS's Booking System
@@ -193,7 +193,11 @@ export default {
 }
 
 html,.my-login-page {
-	height: 100%;
+	height: auto;
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
 }
 
 div.my-login-page {

@@ -1,8 +1,8 @@
 <template>
   <div class="my-login-page">
-      <section class="h-100">
-      <div class="container h-100">
-        <div class="row justify-content-md-center h-100">
+      <section class="">
+      <div class="container">
+        <div class="row justify-content-md-center">
           <div class="card-wrapper">
             <div class="brand">
               CHRS's Booking System
@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="form-group m-0">
-                      <button type="submit" class="btn btn-primary btn-block" @click="sendPasswordResetEmail">
+                      <button type="submit" class="btn btn-primary btn-block text-center" @click="sendPasswordResetEmail">
                         Reset Password
                       </button>
                     </div>
@@ -154,7 +154,11 @@ export default {
 }
 
 html,.my-login-page {
-	height: 100%;
+	height: auto;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 div.my-login-page {

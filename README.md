@@ -18,7 +18,8 @@
 
 04/02 Added check validity when create Store can not use empty String, ".", "#", "$" to create store's name.
 
-04/06 Added forgot password page, and make this featured working.  
+04/06 Added forgot password page, and make this featured working.
+      Fix some layout problem.
 
 ## Project setup
 ```
