@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import SignIn from '@/views/SignIn'
 import Register from '@/views/Register'
+import Forgot from '@/views/Forgot'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,7 @@ const routes = [
     components: {
       default: SignIn,
       Register,
+      Forgot
     }
   },
   // {

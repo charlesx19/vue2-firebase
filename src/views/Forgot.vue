@@ -9,49 +9,32 @@
             </div>
             <div class="card fat">
               <div class="card-body">
-                <h4 class="card-title">Login</h4>
-                <form method="POST" class="my-login-validation" novalidate="">
-                  <div class="form-group">
-                    <label for="email">E-Mail Address</label>
-                    <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
-                    <div class="invalid-feedback">
-                      Email is invalid
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="password">Password
-                      <a @click="$emit('forgotPageToggle')" class="float-right" style="font-size: 12px; color: #007bff; cursor: pointer">
-                        Forgot Password?
-                      </a>
-                    </label>
-                    <input id="password" type="password" class="form-control" name="password" required data-eye>
+                <div class="card-body">
+                  <h4 class="card-title">Forgot Password</h4>
+                  <form method="POST" class="my-login-validation" novalidate="">
+                    <div class="form-group">
+                      <label for="email" class="d-flex justify-content-between">E-Mail Address <span @click="$emit('forgotPageToggle')" style="font-size: 12px; color: #007bff; cursor: pointer">Back to Login</span></label>
+                      <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
                       <div class="invalid-feedback">
-                        Password is required
+                        Email is invalid
                       </div>
-                  </div>
-
-                  <div class="form-group">
-                    <div class="custom-checkbox custom-control">
-                      <input type="checkbox" name="remember" id="remember" class="custom-control-input">
-                      <label for="remember" class="custom-control-label">Remember Me</label>
+                      <div class="form-text text-muted">
+                        By clicking "Reset Password" we will send a password reset link
+                      </div>
                     </div>
-                  </div>
 
-                  <div class="form-group m-0">
-                    <button type="submit" class="btn btn-primary btn-block text-center" @click="signInAction">
-                      Login
-                    </button>
-                  </div>
-                  <div class="mt-4 text-center">
-                    Don't have an account? <a class="toggleButton" @click="$emit('registerPageToggle')">Create One</a>
-                  </div>
-                </form>
+                    <div class="form-group m-0">
+                      <button type="submit" class="btn btn-primary btn-block" @click="sendPasswordResetEmail">
+                        Reset Password
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
             <div class="footer">
-              Copyright &copy; 2021 &mdash; CHRS?!
-            </div>
+							Copyright &copy; 2021 &mdash; CHRS?!
+						</div>
           </div>
         </div>
       </div>
@@ -65,36 +48,27 @@ import firebase from 'firebase/app'
 
 
 export default {
-  name: 'SignIn',
+  name: 'Forgot',
   props: {
   },
-  emits: ['updateFormFirebase'],
   data(){
     return {
       user: null,
     };
   },
   methods: {
-    signInAction(){
-      let email = $('#email');
-      let password = $('#password');
-      firebase.auth().signInWithEmailAndPassword(email.val(), password.val())
-      .then((userCredential) => {
-          alert('Sign in success!')
-          // console.log(userCredential)
-          this.user = userCredential.user;
-          // this.updateFromFirebase();
-      })
-      .then( () => {
-        // this.$store.commit('signInUid', this.user);
-        this.$emit('updateFromFirebase');
-      })
-      .catch((error) => {
-        // console.log(error.message)
+    sendPasswordResetEmail(){
+      var auth = firebase.auth();
+      var email = $('#email');
+      var emailAddress = email.val();
+      var $this = this;
+
+      auth.sendPasswordResetEmail(emailAddress).then(function() {
+        alert('Reset password email is sended!')
+        $this.$emit('forgotPageToggle');
+      }).catch(function(error) {
         alert(error.message)
       });
-
-      // alert("hi")
     },
   },
   mounted(){

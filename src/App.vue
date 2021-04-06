@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <!-- <h1>{{ "認證狀態:" + emailVerified }}</h1> -->
-    <router-view v-if="!user && registerPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle"></router-view>
+    <router-view v-if="!user && registerPage == false && forgotPage == false" @updateFromFirebase="updateFromFirebase" @registerPageToggle="registerPageToggle" @forgotPageToggle="forgotPageToggle"></router-view>
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
+    <router-view name="Forgot" v-if="forgotPage == true" @forgotPageToggle="forgotPageToggle"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
     <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
     <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
@@ -234,6 +235,7 @@ export default {
       uid: null,
       user: null,
       registerPage: false,
+      forgotPage: false,
       storeInfoTemp: [
         {
           id: 1,
@@ -275,8 +277,14 @@ export default {
       });
     },
     test2(){
-    var user = firebase.auth().currentUser;
-     console.log(user)
+      var auth = firebase.auth();
+      var emailAddress = "charlesx19@gmail.com";
+
+      auth.sendPasswordResetEmail(emailAddress).then(function() {
+        alert('done')
+      }).catch(function(error) {
+        alert(error)
+      });
     },
     signIn(){
       firebase.auth().signInWithEmailAndPassword('charlesx106@gmail.com', '19870118')
@@ -316,6 +324,9 @@ export default {
     registerUidSignIn(user){
       this.user = user;
       this.uid = user.uid;
+    },
+    forgotPageToggle(){
+      this.forgotPage = !this.forgotPage;
     },
     resendValidationEmail(){
       var user = firebase.auth().currentUser;
