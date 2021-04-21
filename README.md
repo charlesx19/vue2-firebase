@@ -21,6 +21,8 @@
 04/06 Added forgot password page, and make this featured working.
       Fix some layout problem.
 
+04/21 Added Guest Signin Button in Login page, now can use guest account to test it.      
+
 ## Project setup
 ```
 npm install

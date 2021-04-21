@@ -5,11 +5,14 @@
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <router-view name="Forgot" v-if="forgotPage == true" @forgotPageToggle="forgotPageToggle"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
-    <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
-    <button @click="signIn" style="position: fixed; right: 30px; bottom: 90px; z-index: 1000">Sign in</button>
-    <button @click="signOut" style="position: fixed; right: 30px; bottom: 60px; z-index: 1000">Sign out</button>
-    <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button> -->
-    <div class="emailVerified" v-if="emailVerified == false">
+    <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button> -->
+    <div class="guest" v-show="!user">
+      For Guest test:
+      <button @click="signIn" class="guestSignin">Sign in</button>
+      <!-- <button @click="signOut" class="guestSignout">Sign out</button> -->
+    </div>
+    <!-- <button @click="test" style="position: fixed; right: 30px; bottom: 30px; z-index: 1000">Test</button> -->
+    <div class="emailVerified" v-if="emailVerified == false && user.email != 'guest@gmail.com'">
       <div class="mainInfo show" ref="mainInfo">
         This account isn't Verified, make sure you already check validation Email.
       </div>
@@ -21,7 +24,7 @@
       </div>
       <button @click="signOut" class="btn btn-danger btn-sm mt-3">Sign out</button>
     </div>
-    <div class="main-info" v-if="user && user.emailVerified == true">
+    <div class="main-info" v-if="user && (user.emailVerified == true || user.email == 'guest@gmail.com')">
       <div id="header" class="">
         <div class="container">
           <h1>Booking System</h1>
@@ -268,13 +271,10 @@ export default {
     test(){
       // console.log(firebase.auth().currentUser)
       // console.log(this.user.uid)
-      var user = firebase.auth().currentUser;
-
-      user.sendEmailVerification().then(function() {
-        // Email sent.
-      }).catch(function(error) {
-        console.log(error)
-      });
+      var userInfo = firebase.auth().currentUser;
+        userInfo.updateProfile({
+            displayName: 'Guest',
+      }) 
     },
     test2(){
       var auth = firebase.auth();
@@ -287,7 +287,7 @@ export default {
       });
     },
     signIn(){
-      firebase.auth().signInWithEmailAndPassword('charlesx106@gmail.com', '19870118')
+      firebase.auth().signInWithEmailAndPassword('guest@gmail.com', '12345678')
         .then((userCredential) => {
           alert('Sign in success!')
           // console.log(userCredential)
@@ -623,6 +623,42 @@ html {
 
 body {
   position: relative;
+}
+
+.guest {
+  position: fixed;
+  right: 30px;
+  bottom: 40px;
+  z-index: 1000;
+  transform: translateY(0);
+  animation: .9s shake ease-in-out infinite;
+  &:hover {
+    animation-play-state: paused;
+  }
+  .guestSignin, .guestSignout {
+    position: relative;
+    display: block;
+    margin: auto;
+    margin: 10px auto;
+    padding: 5px 10px;
+    border: none;
+    background: #007DDB;
+    border-radius: 5px;
+    color: #fff;
+    &:hover {
+      background: #1d9dff;
+    }
+  }
+}
+
+
+@keyframes shake {
+  0%, 100%{
+    transform: translateY(0);
+  }
+  60%{
+    transform: translateY(-20%);
+  }
 }
 
 .emailVerified {
