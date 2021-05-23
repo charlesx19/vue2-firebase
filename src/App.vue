@@ -313,13 +313,13 @@ export default {
     },
     uploadFile(){
 
-      if (document.getElementById('fileButton').files[0] != undefined && document.getElementById('fileButton').files[0].type === 'image/jpeg') {
+      if (document.getElementById('fileButton').files[0] != undefined && document.getElementById('fileButton').files[0].type === 'image/jpeg' && this.storeInfoTemp.name !== undefined) {
         this.uploadCoverStart = true;
 
         var fileButton = document.getElementById('fileButton');
         var file = fileButton.files[0];
         this.tempFileName = file.name;
-        var storageRef = firebase.storage().ref('store/' + this.user.uid);
+        var storageRef = firebase.storage().ref('store/' + this.user.uid + '/' + this.storeInfoTemp.name);
         var metadata = {
           contentType: 'image/jpeg',
         };
@@ -358,7 +358,7 @@ export default {
         );
 
       } else {
-        alert('files type should be image/jpeg!')
+        alert('Check file type is image/img? or store name is empty?')
       }
     },
     test(){
@@ -517,7 +517,7 @@ export default {
             name: this.storeInfoTemp.name,
             tables: [],
             emptyTable: 0,
-            coverUrl: this.tempFileNameUrl,
+            coverUrl: this.tempFileNameUrl
         };
         for (let i=0; i < this.tablesTemp; i++) {
           let tables = 

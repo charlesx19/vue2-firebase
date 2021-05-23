@@ -24,6 +24,7 @@
 04/21 Added Guest Signin Button in Login page, now can use guest account to test it.
 
 05/23 Added Create a new store can upload img.
+      Fix some bugs.
 
 ## Project setup
 ```
