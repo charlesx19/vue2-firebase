@@ -5,7 +5,7 @@
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <router-view name="Forgot" v-if="forgotPage == true" @forgotPageToggle="forgotPageToggle"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
-    <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
+    <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button> -->
     <div class="guest" v-show="!user">
       For Guest test:
       <button @click="signIn" class="guestSignin">Sign in</button>
