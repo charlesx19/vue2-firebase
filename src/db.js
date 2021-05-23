@@ -18,7 +18,8 @@
 import firebase from 'firebase/app'
 import 'firebase/database'
 import 'firebase/auth'
+import 'firebase/storage'
 
 export const db = firebase
-  .initializeApp({ databaseURL: 'https://chrstest-927f2-default-rtdb.firebaseio.com', apiKey: "AIzaSyDuk_kmqwZeyX_yCoBsxljyu6sHdVErops" })
+  .initializeApp({ databaseURL: 'https://chrstest-927f2-default-rtdb.firebaseio.com', storageBucket: "chrstest-927f2.appspot.com", apiKey: "AIzaSyDuk_kmqwZeyX_yCoBsxljyu6sHdVErops" })
   .database()

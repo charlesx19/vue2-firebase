@@ -5,7 +5,7 @@
     <router-view name="Register" v-if="registerPage == true" @updateFromFirebase="updateFromFirebase(user)" @registerPageToggle="registerPageToggle" @registerUidSignIn="registerUidSignIn"></router-view>
     <router-view name="Forgot" v-if="forgotPage == true" @forgotPageToggle="forgotPageToggle"></router-view>
     <!-- <SignIn v-if="user" @updateFromFirebase="updateFromFirebase"></SignIn> -->
-    <!-- <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button> -->
+    <button @click="test2" style="position: fixed; right: 30px; bottom: 120px; z-index: 1000">Test2</button>
     <div class="guest" v-show="!user">
       For Guest test:
       <button @click="signIn" class="guestSignin">Sign in</button>
@@ -51,7 +51,7 @@
             <a class="col-12 col-md-6 col-lg-4 col-xl-3 px-2 mb-3 store-item" v-for="item in store" @click="showDetail" :key="item.id" href="#titleAnchor">
               <div class="delete" @click.stop.prevent="deleteStore">×</div>
               <div class="card" :class="{full: item.emptyTable == 0}" :data-store="item.name">
-                <img src="https://source.unsplash.com/640x480/?restaurant" class="card-img-top" alt="storeImg">
+                <img :src='item.coverUrl ? item.coverUrl : noCover' class="card-img-top" alt="storeImg">
                 <div class="card-body">
                   <h5 class="card-title">{{ item.name }}</h5>
                   <p class="card-text">總桌數： {{ item.tables.length }}</p>
@@ -135,7 +135,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="storeModalLabel">Add new store</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="createStore">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
@@ -145,6 +145,21 @@
                     <li class="col-12">tables:<input type="number" v-model.number="tablesTemp"></li>
                     <li class="col-12" v-for="(seat, index) in tablesTemp" :key="index">{{ seat }}號桌
                       <input type="number" v-model.number="seatsTemp[seat-1]">
+                    </li>
+                    <li class="col-12">
+                      cover:
+                      <div class="d-flex flex-column w-75">
+                        <span id="uploadFileBox">
+                          <input type="file" value="upload" id="fileButton" @change="fileChanged">
+                          <label id="fileButtonLabel" for="fileButton">Choose a photo</label>
+                          <button id="uploadFile" @click="uploadFile">上傳</button>
+                        </span>
+                        <span class="mt-2 d-flex align-items-center" v-if="uploadCoverStart">
+                          <progress id="uploader" :class='{success: uploadCoverFinish}' value="0" max="100" style="width: 85%"></progress>
+                          <span id="percentage" style="width: 15%">0%</span>
+                        </span>
+                        <span v-if="uploadCoverFinish && !uploadCoverStart">{{ tempFileName + " "}}已上傳完成</span>
+                      </div>
                     </li>
                 </ul>
               </div>
@@ -207,6 +222,11 @@
         </div>
       </div>
     </div>
+    <!-- <progress value="0" max="100" id="uploader"></progress>
+    <span id="percentage">0%</span>
+    <input type="file" value="upload" id="fileButton">
+    <button @click="uploadFile">Upload</button> -->
+
   </div>
 </template>
 
@@ -265,9 +285,82 @@ export default {
         no: null
       }],
       drag: false,
+      uploadCoverStart: false,
+      uploadCoverFinish: false,
+      tempFileName: "",
+      tempFileNameUrl: "",
+      noCover: "https://chensangha.com/wp-content/plugins/ninja-forms/assets/img/no-image-available-icon-6.jpg"
     }
   },
   methods: {
+    resetFileUploader(){
+      var fileButton = document.getElementById('fileButton');
+      var uploader = document.getElementById('uploader');
+      var percentage = document.getElementById('percentage');
+      var fileButtonLabel = document.getElementById('fileButtonLabel');
+      
+      fileButton.value = "";
+      fileButtonLabel.innerText = "Choose a photo";
+
+      percentage.innerText = "0%";
+      uploader.value = 0;
+    },
+    fileChanged(){
+      var fileButton = document.getElementById('fileButton');
+      var fileButtonLabel = document.getElementById('fileButtonLabel');
+      fileButtonLabel.innerText = fileButton.files[0].name;
+      
+    },
+    uploadFile(){
+
+      if (document.getElementById('fileButton').files[0] != undefined && document.getElementById('fileButton').files[0].type === 'image/jpeg') {
+        this.uploadCoverStart = true;
+
+        var fileButton = document.getElementById('fileButton');
+        var file = fileButton.files[0];
+        this.tempFileName = file.name;
+        var storageRef = firebase.storage().ref('store/' + this.user.uid);
+        var metadata = {
+          contentType: 'image/jpeg',
+        };
+
+        // Create a reference to 'mountains.jpg'
+        var task = storageRef.put(file, metadata);
+        var $this = this;
+
+        task.on('state_changed',
+
+          function progress(snapshot){
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progress = progress.toFixed(0);
+            var uploader = document.getElementById('uploader');
+            // var fileButton = document.getElementById('fileButton');
+            var percentage = document.getElementById('percentage');
+            
+            percentage.innerText = progress+"%";
+            uploader.value = progress;
+          },
+
+          function error(){
+
+          },
+
+          function complete(){
+            task.snapshot.ref.getDownloadURL().then((downloadURL) => {
+              console.log('File available at', downloadURL);
+              $this.tempFileNameUrl = downloadURL;
+            });
+            $this.resetFileUploader();
+            $this.uploadCoverStart = false;
+            $this.uploadCoverFinish = true;
+          }
+
+        );
+
+      } else {
+        alert('files type should be image/jpeg!')
+      }
+    },
     test(){
       // console.log(firebase.auth().currentUser)
       // console.log(this.user.uid)
@@ -277,14 +370,11 @@ export default {
       }) 
     },
     test2(){
-      var auth = firebase.auth();
-      var emailAddress = "charlesx19@gmail.com";
-
-      auth.sendPasswordResetEmail(emailAddress).then(function() {
-        alert('done')
-      }).catch(function(error) {
-        alert(error)
-      });
+      // console.log(firebase.auth().currentUser);
+      // console.log(this.user.uid);
+      var fileButton = document.getElementById('fileButton');
+      var file = fileButton.files[0];
+      console.log(file);
     },
     signIn(){
       firebase.auth().signInWithEmailAndPassword('guest@gmail.com', '12345678')
@@ -427,6 +517,7 @@ export default {
             name: this.storeInfoTemp.name,
             tables: [],
             emptyTable: 0,
+            coverUrl: this.tempFileNameUrl,
         };
         for (let i=0; i < this.tablesTemp; i++) {
           let tables = 
@@ -500,6 +591,9 @@ export default {
       ];
       this.tablesTemp = 0;
       this.seatsTemp = [];
+      this.uploadCoverFinish = false;
+      this.tempFileName = "";
+      this.tempFileNameUrl = "";
     },
     closeTableModal(){
       this.newBkInfo[0].bkInfo.name = "";
@@ -1058,9 +1152,59 @@ body {
     }
   }
 }
-</style>
+progress {
+  position: relative;
+}
+#percentage {
+  display: block;
+  text-align: center;
+  height: 30px;
+}
 
-// -webkit-calendar-picker-indicator {
-//     display: none;
-//     -webkit-appearance: none;
-// }
+#uploadFileBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  #fileButton {
+    display: none;
+    flex-grow: 1;
+  }
+  #fileButtonLabel {
+    flex-grow: 1;
+    margin: 0;
+    margin-right: 2px;
+    padding: 3px 10px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    background: #007BFF;
+    color: #fff;
+    cursor: pointer;
+  }
+  #uploadFile {
+    padding: 3px 10px;
+    border: none;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background: #007BFF;
+    color: #fff;
+    &:checked {
+      outline: none;
+    }
+  }
+}
+
+
+#uploader {
+  &.success {
+    position: relative;
+    // &:after {
+    //   position: absolute;
+    //   content: '上傳完成';
+    //   left: 0;
+    //   bottom: -60%;
+    //   width: 100%;
+    //   height: 100%;
+    // }
+  }
+}
+</style>
